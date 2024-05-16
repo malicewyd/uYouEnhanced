@@ -1251,8 +1251,9 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
                 }
             }
         }
+
         if ([child isKindOfClass:%c(ASNodeController)]) {
-            ASDisplayNode *childNode = ((ASNodeController *)child).node;
+            ASDisplayNode *childNode = ((ASNodeController *)child).node; // ELMContainerNode
             NSArray *yogaChildren = childNode.yogaChildren;
             for (ASDisplayNode *displayNode in yogaChildren) {
                 if ([identifiers containsObject:displayNode.accessibilityIdentifier])
@@ -1260,11 +1261,13 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
             }
             ASNodeController *nestedNodeController = (ASNodeController *)child;
             if ([nestedNodeController isKindOfClass:[ASDisplayNode class]]) {
-                if ([identifiers containsObject:nestedNodeController.accessibilityIdentifier])
+                if ([identifiers containsObject:nestedNodeController.identifier])
                     return YES;
             }
+
             return findCell(child, identifiers);
         }
+
     }
     return NO;
 }
