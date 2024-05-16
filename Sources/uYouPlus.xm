@@ -1,7 +1,6 @@
 #import "uYouPlus.h"
 
 NSData *cellDividerData;
-NSArray *identifiersToCheck;
 
 // Tweak's bundle for Localizations support - @PoomSmart - https://github.com/PoomSmart/YouPiP/commit/aea2473f64c75d73cab713e1e2d5d0a77675024f
 NSBundle *uYouPlusBundle() {
@@ -1254,11 +1253,17 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
         }
 
         if ([child isKindOfClass:%c(ASNodeController)]) {
-            ASNodeController *childNodeController = (ASNodeController *)child;
-            if (findCell(childNodeController, identifiers)) {
-                return YES;
+            ASDisplayNode *childNode = ((ASNodeController *)child).node; // ELMContainerNode
+            NSArray *yogaChildren = childNode.yogaChildren;
+            for (ASDisplayNode *displayNode in yogaChildren) {
+                if ([identifiers containsObject:displayNode.accessibilityIdentifier])
+                    return YES;
             }
+
+            return findCell(child, identifiers);
         }
+
+        return NO;
     }
     return NO;
 }
@@ -1269,13 +1274,11 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
     if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
         ASCellNode *node = [element node];
         ASNodeController *nodeController = [node controller];
-        NSArray *identifiersToCheck = @[@"id.video.share.button", @"id.video.remix.button", @"Thanks", @"clip_button.eml", @"id.ui.add_to.offline.button"];
-
-        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
+        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button", @"class.share.button"])) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideRemixButton_enabled") && findCell(nodeController, @[@"id.video.remix.button"])) {
+        if (IS_ENABLED(@"hideRemixButton_enabled") && findCell(nodeController, @[@"id.video.remix.button", @"class.remix.button"])) {
             return CGSizeZero;
         }
 
@@ -1283,15 +1286,15 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideClipButton_enabled") && findCell(nodeController, @[@"clip_button.eml"])) {
+        if (IS_ENABLED(@"hideClipButton_enabled") && findCell(nodeController, @[@"clip_button.eml", @"class.clip_button"])) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"id.ui.add_to.offline.button"])) {
+        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"id.ui.add_to.offline.button", @"class.download_button"])) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideCommentSection_enabled") && findCell(nodeController, @[@"id.ui.carousel_header"])) {
+        if (IS_ENABLED(@"hideCommentSection_enabled") && findCell(nodeController, @[@"id.ui.carousel_header", @"class.comment_section"])) {
             return CGSizeZero;
         }
     }
