@@ -1270,7 +1270,7 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
         ASNodeController *nodeController = [node controller];
         NSArray *identifiersToCheck = @[@"id.video.share.button", @"id.video.remix.button", @"Thanks", @"clip_button.eml", @"id.ui.add_to.offline.button"];
 
-        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, [@[@"id.video.share.button"]])) {
+        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
             return CGSizeZero;
         }
 
