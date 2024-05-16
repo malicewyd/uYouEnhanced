@@ -1256,11 +1256,29 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
             ASDisplayNode *childNode = ((ASNodeController *)child).node; // ELMContainerNode
             NSArray *yogaChildren = childNode.yogaChildren;
             for (ASDisplayNode *displayNode in yogaChildren) {
-                if ([identifiers containsObject:displayNode.accessibilityIdentifier])
+                if ([identifiers containsObject:displayNode.accessibilityIdentifier]) {
                     return YES;
+                }
             }
 
             return findCell(child, identifiers);
+        }
+    }
+    return NO;
+}
+
+static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, NSString *accessibilityIdentifier) {
+    for (id child in [nodeController children]) {
+        if ([child isKindOfClass:%c(ASNodeController)]) {
+            ASDisplayNode *childNode = ((ASNodeController *)child).node;
+            NSArray *yogaChildren = childNode.yogaChildren;
+            for (ASDisplayNode *displayNode in yogaChildren) {
+                if ([displayNode.accessibilityIdentifier isEqualToString:accessibilityIdentifier]) {
+                    return YES;
+                }
+            }
+
+            return findCellByAccessibilityIdentifier(child, accessibilityIdentifier);
         }
     }
     return NO;
@@ -1272,11 +1290,12 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
     if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
         ASCellNode *node = [element node];
         ASNodeController *nodeController = [node controller];
-        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
+        
+        if (IS_ENABLED(@"hideShareButton_enabled") && (findCell(nodeController, @[@"id.video.share.button"]) || findCellByAccessibilityIdentifier(nodeController, @"id.video.share.button"))) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideRemixButton_enabled") && findCell(nodeController, @[@"id.video.remix.button"])) {
+        if (IS_ENABLED(@"hideRemixButton_enabled") && (findCell(nodeController, @[@"id.video.remix.button"]) || findCellByAccessibilityIdentifier(nodeController, @"id.video.remix.button"))) {
             return CGSizeZero;
         }
 
@@ -1284,15 +1303,15 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideClipButton_enabled") && findCell(nodeController, @[@"clip_button.eml"])) {
+        if (IS_ENABLED(@"hideClipButton_enabled") && (findCell(nodeController, @[@"clip_button.eml"]) || findCellByAccessibilityIdentifier(nodeController, @"clip_button.eml"))) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"id.ui.add_to.offline.button"])) {
+        if (IS_ENABLED(@"hideDownloadButton_enabled") && (findCell(nodeController, @[@"id.ui.add_to.offline.button"]) || findCellByAccessibilityIdentifier(nodeController, @"id.ui.add_to.offline.button"))) {
             return CGSizeZero;
         }
 
-        if (IS_ENABLED(@"hideCommentSection_enabled") && findCell(nodeController, @[@"id.ui.carousel_header"])) {
+        if (IS_ENABLED(@"hideCommentSection_enabled") && (findCell(nodeController, @[@"id.ui.carousel_header"]) || findCellByAccessibilityIdentifier(nodeController, @"id.ui.carousel_header"))) {
             return CGSizeZero;
         }
     }
