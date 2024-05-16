@@ -1243,22 +1243,18 @@ BOOL isAdString(NSString *description) {
 static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *identifiers) {
     for (id child in [nodeController children]) {
         if ([child isKindOfClass:%c(ELMNodeController)]) {
-            ELMNodeController *elmNodeController = (ELMNodeController *)child;
-            for (ELMComponent *elmChild in elmNodeController.children) {
+            NSArray <ELMComponent *> *elmChildren = [(ELMNodeController *)child children];
+            for (ELMComponent *elmChild in elmChildren) {
                 for (NSString *identifier in identifiers) {
-                    if ([elmChild isKindOfClass:[ASDisplayNode class]]) {
-                        ASDisplayNode *displayNode = (ASDisplayNode *)elmChild;
-                        if ([displayNode.accessibilityIdentifier isEqualToString:identifier]) {
-                            return YES;
-                        }
-                    }
+                    if ([[elmChild description] containsString:identifier])
+                        return YES;
                 }
             }
         }
 
         if ([child isKindOfClass:%c(ASNodeController)]) {
-            ASNodeController *subNodeController = (ASNodeController *)child;
-            if (findCell(subNodeController, identifiers)) {
+            ASNodeController *childNodeController = (ASNodeController *)child;
+            if (findCell(childNodeController, identifiers)) {
                 return YES;
             }
         }
@@ -1272,7 +1268,9 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
     if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
         ASCellNode *node = [element node];
         ASNodeController *nodeController = [node controller];
-        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
+        NSArray *identifiersToCheck = @[@"id.video.share.button", @"id.video.remix.button", @"Thanks", @"clip_button.eml", @"id.ui.add_to.offline.button"];
+
+        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, [@[@"id.video.share.button"]])) {
             return CGSizeZero;
         }
 
