@@ -1260,10 +1260,10 @@ static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *ide
                     return YES;
             }
 
-            return findCell(child, identifiers);
+            if (findCell(child, identifiers)) {
+                return YES;
+            }
         }
-
-        return NO;
     }
     return NO;
 }
