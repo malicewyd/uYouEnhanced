@@ -1243,31 +1243,25 @@ BOOL isAdString(NSString *description) {
 static BOOL findCell(ASNodeController *nodeController, NSArray <NSString *> *identifiers) {
     for (id child in [nodeController children]) {
         if ([child isKindOfClass:%c(ELMNodeController)]) {
-            NSArray <ELMComponent *> *elmChildren = [(ELMNodeController *)child children];
-            for (ELMComponent *elmChild in elmChildren) {
+            ELMNodeController *elmNodeController = (ELMNodeController *)child;
+            for (ELMComponent *elmChild in elmNodeController.children) {
                 for (NSString *identifier in identifiers) {
-                    if ([[elmChild description] containsString:identifier])
-                        return YES;
+                    if ([elmChild isKindOfClass:[ASDisplayNode class]]) {
+                        ASDisplayNode *displayNode = (ASDisplayNode *)elmChild;
+                        if ([displayNode.accessibilityIdentifier isEqualToString:identifier]) {
+                            return YES;
+                        }
+                    }
                 }
             }
         }
 
         if ([child isKindOfClass:%c(ASNodeController)]) {
-            ASDisplayNode *childNode = ((ASNodeController *)child).node; // ELMContainerNode
-            NSArray *yogaChildren = childNode.yogaChildren;
-            for (ASDisplayNode *displayNode in yogaChildren) {
-                if ([identifiers containsObject:displayNode.accessibilityIdentifier])
-                    return YES;
+            ASNodeController *subNodeController = (ASNodeController *)child;
+            if (findCell(subNodeController, identifiers)) {
+                return YES;
             }
-            ASNodeController *nestedNodeController = (ASNodeController *)child;
-            if ([nestedNodeController isKindOfClass:[ASDisplayNode class]]) {
-                if ([identifiers containsObject:nestedNodeController.identifier])
-                    return YES;
-            }
-
-            return findCell(child, identifiers);
         }
-
     }
     return NO;
 }
