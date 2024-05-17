@@ -1453,6 +1453,15 @@ static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, 
 %end
 %end
 
+// Auto-Hide Home Bar - @arichornlover
+%group gAutoHideHomeBar
+%hook UIViewController
+- (BOOL)prefersHomeIndicatorAutoHidden {
+    return YES;
+}
+%end
+%end
+
 // YT startup animation
 %hook YTColdConfig
 - (BOOL)mainAppCoreClientIosEnableStartupAnimation {
@@ -1727,6 +1736,9 @@ static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, 
     if (IS_ENABLED(@"hideHomeTab_enabled")) {
         %init(gHideHomeTab);
     }
+    if (IS_ENABLED(@"autoHideHomeBar_enabled")) {
+        %init(gAutoHideHomeBar);
+    }
     if (IS_ENABLED(@"hideDoubleTapToSeekOverlay_enabled")) {
         %init(gHideDoubleTapToSeekOverlay);
     }
@@ -1737,7 +1749,7 @@ static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, 
         %init(gFixCasting);
     }
 
-    // YTNoModernUI - @arichorn
+    // YTNoModernUI - @arichornlover
     BOOL ytNoModernUIEnabled = IS_ENABLED(@"ytNoModernUI_enabled");
     if (ytNoModernUIEnabled) {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
