@@ -983,7 +983,6 @@ BOOL isAdString(NSString *description) {
     return IS_ENABLED(@"hideChannelWatermark_enabled") ? NO : %orig;
 }
 %end
-// Hide Channel Watermark (for Old YouTube Versions / Backwards Compatibility)
 %hook YTAnnotationsViewController
 - (void)loadFeaturedChannelWatermark {
     if (IS_ENABLED(@"hideChannelWatermark_enabled")) {}
@@ -1317,7 +1316,42 @@ static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, 
     }
     return %orig;
 }
+- (BOOL)dataController:(id)dataController presentedSizeForElement:(id)element matchesSize:(CGSize)size {
+    if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
+        ASCellNode *node = [element node];
+        ASNodeController *nodeController = [node controller];
+        if (IS_ENABLED(@"hideShareButton_enabled") && findCell(nodeController, @[@"id.video.share.button"])) {
+            return NO;
+        }
 
+        if (IS_ENABLED(@"hideRemixButton_enabled") && findCell(nodeController, @[@"id.video.remix.button"])) {
+            return NO;
+        }
+
+        if (IS_ENABLED(@"hideThanksButton_enabled") && findCell(nodeController, @[@"Thanks"])) {
+            return NO;
+        }
+        
+        if (IS_ENABLED(@"hideClipButton_enabled") && findCell(nodeController, @[@"clip_button.eml"])) {
+            return NO;
+        }
+
+        if (IS_ENABLED(@"hideDownloadButton_enabled") && findCell(nodeController, @[@"id.ui.add_to.offline.button"])) {
+            return NO;
+        }
+
+    }
+    return %orig;
+}
+
+%end
+
+%hook _ASDisplayView
+- (void)setAccessibilityLabel:(NSString *)accessibilityLabel {
+    %orig;
+    if ([accessibilityLabel isEqualToString:@"Thanks"]) {
+    }
+}
 %end
 
 // App Settings Overlay Options
