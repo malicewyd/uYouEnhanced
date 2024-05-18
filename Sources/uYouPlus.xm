@@ -1345,33 +1345,7 @@ static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, 
     }
     return %orig;
 }
-- (BOOL)dataController:(id)dataController presentedSizeForElement:(id)element matchesSize:(CGSize)size {
-    if ([self.accessibilityIdentifier isEqualToString:@"id.video.scrollable_action_bar"]) {
-        ASCellNode *node = [element node];
-        ASNodeController *nodeController = [node controller];
-        if (IS_ENABLED(@"hideShareButton_enabled") && shouldHideCell(nodeController, @[@"id.video.share.button"])) {
-            return NO;
-        }
-
-        if (IS_ENABLED(@"hideRemixButton_enabled") && shouldHideCell(nodeController, @[@"id.video.remix.button"])) {
-            return NO;
-        }
-
-        if (IS_ENABLED(@"hideThanksButton_enabled") && shouldHideCell(nodeController, @[@"Thanks"])) {
-            return NO;
-        }
-        
-        if (IS_ENABLED(@"hideClipButton_enabled") && shouldHideCell(nodeController, @[@"clip_button.eml"])) {
-            return NO;
-        }
-
-        if (IS_ENABLED(@"hideDownloadButton_enabled") && shouldHideCell(nodeController, @[@"id.ui.add_to.offline.button"])) {
-            return NO;
-        }
-
-    }
-    return %orig;
-}
+// - (BOOL)dataController:(id)dataController presentedSizeForElement:(id)element matchesSize:(CGSize)size { }
 
 %end
 
