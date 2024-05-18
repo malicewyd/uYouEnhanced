@@ -1295,23 +1295,6 @@ static BOOL shouldHideCell(ASNodeController *nodeController, NSArray <NSString *
     return NO;
 }
 
-static BOOL findCellByAccessibilityIdentifier(ASNodeController *nodeController, NSString *accessibilityIdentifier) {
-    for (id child in [nodeController children]) {
-        if ([child isKindOfClass:%c(ASNodeController)]) {
-            ASDisplayNode *childNode = ((ASNodeController *)child).node;
-            NSArray *yogaChildren = childNode.yogaChildren;
-            for (ASDisplayNode *displayNode in yogaChildren) {
-                if ([displayNode.accessibilityIdentifier isEqualToString:accessibilityIdentifier]) {
-                    return YES;
-                }
-            }
-
-            return findCellByAccessibilityIdentifier(child, accessibilityIdentifier);
-        }
-    }
-    return NO;
-}
-
 %hook ASCollectionView // This stopped working on May 14th 2024 due to a Server-Side Change from YouTube.
 
 - (CGSize)sizeForElement:(ASCollectionElement *)element {
